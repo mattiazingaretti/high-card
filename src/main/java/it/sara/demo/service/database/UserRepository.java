@@ -1,5 +1,6 @@
 package it.sara.demo.service.database;
 
+import it.sara.demo.exception.GenericException;
 import it.sara.demo.service.database.model.User;
 import org.springframework.stereotype.Component;
 
@@ -9,10 +10,14 @@ import java.util.Optional;
 @Component
 public class UserRepository {
 
-    public boolean save(User user) {
-        user.setGuid(java.util.UUID.randomUUID().toString());
-        FakeDatabase.TABLE_USER.add(user);
-        return true;
+    public String save(User user) throws GenericException {
+        try{
+            user.setGuid(java.util.UUID.randomUUID().toString());
+            FakeDatabase.TABLE_USER.add(user);
+            return user.getGuid();
+        }catch (Exception e) {
+            throw new GenericException(500, "Error saving user");
+        }
     }
 
     public Optional<User> getByGuid(String guid) {

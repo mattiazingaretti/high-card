@@ -1,5 +1,9 @@
 package it.sara.demo.service.user.impl;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import it.sara.demo.exception.GenericException;
 import it.sara.demo.service.database.UserRepository;
 import it.sara.demo.service.database.model.User;
@@ -8,61 +12,37 @@ import it.sara.demo.service.user.criteria.CriteriaAddUser;
 import it.sara.demo.service.user.criteria.CriteriaGetUsers;
 import it.sara.demo.service.user.result.AddUserResult;
 import it.sara.demo.service.user.result.GetUsersResult;
-import it.sara.demo.service.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private StringUtil stringUtil;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
+    // With a real Data source configured this would be better to be anntoated with
+    // @Transactional(rollbackFor = GenericException.class)
     public AddUserResult addUser(CriteriaAddUser criteria) throws GenericException {
-
-        AddUserResult returnValue;
-        User user;
-
         try {
 
-            returnValue = new AddUserResult();
+            AddUserResult returnValue = new AddUserResult();
+            User user = modelMapper.map(criteria, User.class);
 
-            if (stringUtil.isNullOrEmpty(criteria.getFirstName())) {
-                throw new GenericException(400, "First name is required");
-            }
-            if (stringUtil.isNullOrEmpty(criteria.getLastName())) {
-                throw new GenericException(400, "Last name is required");
-            }
-            if (stringUtil.isNullOrEmpty(criteria.getEmail())) {
-                throw new GenericException(400, "Email is required");
-            }
-            if (stringUtil.isNullOrEmpty(criteria.getPhoneNumber())) {
-                throw new GenericException(400, "Phone is required");
-            }
+            String guid = userRepository.save(user);
+            returnValue.setGuid(guid);
 
-            user = new User();
-            user.setFirstName(criteria.getFirstName());
-            user.setLastName(criteria.getLastName());
-            user.setEmail(criteria.getEmail());
-            user.setPhoneNumber(criteria.getPhoneNumber());
-
-            if (!userRepository.save(user)) {
-                throw new GenericException(500, "Error saving user");
-            }
-
+            return returnValue;
         } catch (Exception e) {
-            if (log.isErrorEnabled()) {
-                log.error(e.getMessage(), e);
-            }
-            throw new GenericException(GenericException.GENERIC_ERROR);
+            log.error(e.getMessage(), e);
+            throw new GenericException(GenericException.USER_SAVE_ERROR);
         }
-        return returnValue;
+
     }
 
     @Override
