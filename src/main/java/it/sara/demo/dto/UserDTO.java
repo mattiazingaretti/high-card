@@ -1,15 +1,10 @@
 package it.sara.demo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 
-
-@ToString 
-@EqualsAndHashCode
-@AllArgsConstructor
 @Getter
+@Setter
 public class UserDTO {
     private String guid;
     private String firstName;

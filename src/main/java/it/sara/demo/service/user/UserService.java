@@ -1,5 +1,6 @@
 package it.sara.demo.service.user;
 
+import it.sara.demo.exception.BadRequestException;
 import it.sara.demo.exception.GenericException;
 import it.sara.demo.service.user.criteria.CriteriaAddUser;
 import it.sara.demo.service.user.criteria.CriteriaGetUsers;

@@ -1,6 +1,8 @@
 package it.sara.demo.service.user.criteria;
 
 import it.sara.demo.service.criteria.GenericCriteria;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,9 +10,17 @@ import lombok.Setter;
 @Setter
 public class CriteriaGetUsers extends GenericCriteria {
 
+    @NotNull(message = "Query must not be null")
     private String query;
+
+    @Min(value = 0, message = "Offset must be 0 or greater")
     private int offset;
+
+    @Min(value = 1, message = "Limit must be at least 1")
     private int limit;
+    
+
+    @NotNull(message = "Order type must not be null")
     private OrderType order;
 
     @Getter

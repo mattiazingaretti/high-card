@@ -20,4 +20,7 @@ public class StatusDTO {
     public static StatusDTO success(String message) {
         return new StatusDTO(200, message != null ? message : "Success", java.util.UUID.randomUUID().toString());
     }
+    public static StatusDTO error(int code, String message) {
+        return new StatusDTO(code, message != null ? message : "Error", java.util.UUID.randomUUID().toString());
+    }
 }
